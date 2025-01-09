@@ -1,0 +1,62 @@
+;
+; wfp_my_goat.inf
+;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = System ; TODO: specify appropriate Class
+ClassGuid   = {4d36e97d-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
+Provider    = %ManufacturerName%
+CatalogFile = wfp_my_goat.cat
+DriverVer   = ; TODO: set DriverVer in stampinf property pages
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+wfp_my_goat.sys = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName% = Standard,NT$ARCH$.10.0...16299 ; %13% support introduced in build 16299
+
+[Standard.NT$ARCH$.10.0...16299]
+%wfp_my_goat.DeviceDesc% = wfp_my_goat_Device, Root\wfp_my_goat ; TODO: edit hw-id
+
+[wfp_my_goat_Device.NT]
+CopyFiles = File_Copy
+
+[File_Copy]
+wfp_my_goat.sys
+
+;-------------- Service installation
+[wfp_my_goat_Device.NT.Services]
+AddService = wfp_my_goat,%SPSVCINST_ASSOCSERVICE%, wfp_my_goat_Service_Inst
+
+; -------------- wfp_my_goat driver install sections
+[wfp_my_goat_Service_Inst]
+DisplayName    = %wfp_my_goat.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\wfp_my_goat.sys
+
+[wfp_my_goat_Device.NT.Wdf]
+KmdfService = wfp_my_goat, wfp_my_goat_wdfsect
+
+[wfp_my_goat_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE = 0x00000002
+ManufacturerName = "<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+DiskName = "wfp_my_goat Installation Disk"
+wfp_my_goat.DeviceDesc = "wfp_my_goat Device"
+wfp_my_goat.SVCDESC = "wfp_my_goat Service"
